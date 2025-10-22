@@ -79,26 +79,34 @@ export const AuthProvider = ({ children }) => {
                         import.meta.env.VITE_API_BASE_URL.includes('localhost')
       
       if (isDemoMode) {
-        // Demo mode - accept any credentials
-        console.log('🎭 Demo mode: Accepting login for development')
+        // Demo mode - only accept specific credentials
+        console.log('🎭 Demo mode: Checking credentials')
         
-        const demoUser = {
-          adminId: 'demo-admin-001',
-          email: email,
-          role: 'admin',
-          name: 'Demo Admin'
+        // Check for specific admin credentials
+        if (email === 'adminbreakfree' && password === 'open4u') {
+          const demoUser = {
+            adminId: 'demo-admin-001',
+            email: email,
+            role: 'admin',
+            name: 'BreakFree Admin'
+          }
+          
+          localStorage.setItem('adminToken', 'demo-token-' + Date.now())
+          setUser(demoUser)
+          setSessionExpiry(Date.now() + 15 * 60 * 1000)
+          
+          console.log(createAuditLog('ADMIN_LOGIN', { 
+            adminId: demoUser.adminId,
+            email: demoUser.email 
+          }))
+          
+          return { success: true }
+        } else {
+          return { 
+            success: false, 
+            error: 'Invalid credentials. Please use adminbreakfree / open4u' 
+          }
         }
-        
-        localStorage.setItem('adminToken', 'demo-token-' + Date.now())
-        setUser(demoUser)
-        setSessionExpiry(Date.now() + 15 * 60 * 1000)
-        
-        console.log(createAuditLog('DEMO_LOGIN', { 
-          adminId: demoUser.adminId,
-          email: demoUser.email 
-        }))
-        
-        return { success: true }
       }
       
       // Production mode - use real API
