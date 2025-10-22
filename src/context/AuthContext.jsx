@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
         } else {
           return { 
             success: false, 
-            error: 'Invalid credentials. Please use adminbreakfree / open4u' 
+            error: 'Invalid credentials. Please check your username and password.' 
           }
         }
       }
