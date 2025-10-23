@@ -95,7 +95,7 @@ const Analytics = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Analytics</h2>
-          <p className="text-sm text-gray-600 mt-1">Detailed insights and trends</p>
+          <p className="text-sm text-gray-600 mt-1">Detailed insights and trendss</p>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
