@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../utils/api'
 import { Search, Filter, MessageSquare, Clock } from 'lucide-react'
+import CustomSelect from '../components/CustomSelect'
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([])
@@ -98,7 +99,7 @@ const Tickets = () => {
 
   const getPriorityBadge = (priority) => {
     const styles = {
-      low: 'bg-blue-100 text-blue-800',
+      low: 'bg-primary-100 text-primary-800',
       medium: 'bg-yellow-100 text-yellow-800',
       high: 'bg-red-100 text-red-800',
       urgent: 'bg-purple-100 text-purple-800'
@@ -113,47 +114,42 @@ const Tickets = () => {
   if (loading && tickets.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Support Tickets</h2>
-          <p className="text-sm text-gray-600 mt-1">Manage customer support tickets</p>
-        </div>
-      </div>
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <select
+          <CustomSelect
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="all">All Status</option>
-            <option value="open">Open</option>
-            <option value="in_progress">In Progress</option>
-            <option value="resolved">Resolved</option>
-            <option value="closed">Closed</option>
-          </select>
-          <select
+            onChange={setStatusFilter}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'open', label: 'Open' },
+              { value: 'in_progress', label: 'In Progress' },
+              { value: 'resolved', label: 'Resolved' },
+              { value: 'closed', label: 'Closed' }
+            ]}
+            placeholder="All Status"
+          />
+          <CustomSelect
             value={priorityFilter}
-            onChange={(e) => setPriorityFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="all">All Priority</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="urgent">Urgent</option>
-          </select>
-          <button className="flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+            onChange={setPriorityFilter}
+            options={[
+              { value: 'all', label: 'All Priority' },
+              { value: 'low', label: 'Low' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'high', label: 'High' },
+              { value: 'urgent', label: 'Urgent' }
+            ]}
+            placeholder="All Priority"
+          />
+          <button className="flex items-center justify-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
             <Filter className="h-5 w-5 mr-2" />
             Apply Filters
           </button>
@@ -164,30 +160,30 @@ const Tickets = () => {
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-primary-500">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Ticket ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Priority
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Assigned To
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Created
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -195,13 +191,13 @@ const Tickets = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {tickets.map((ticket) => (
                 <tr key={ticket.ticketId} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-client-text">
                     {ticket.ticketId}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">{ticket.subject}</div>
+                    <div className="text-sm text-client-text">{ticket.subject}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text-muted capitalize">
                     {ticket.category}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -210,14 +206,14 @@ const Tickets = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(ticket.status)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text-muted">
                     {ticket.assignedTo}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text-muted">
                     {new Date(ticket.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900">
+                    <button className="text-primary-500 hover:text-primary-700">
                       <MessageSquare className="h-5 w-5" />
                     </button>
                   </td>

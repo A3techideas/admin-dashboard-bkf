@@ -16,7 +16,7 @@
 /* Ensure main content area is always visible */
 main {
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: #FFFFFF;
 }
 
 /* Fix for chart containers */
@@ -37,7 +37,8 @@ main {
 body {
   margin: 0;
   padding: 0;
-  background-color: #f9fafb;
+  background-color: #FFFFFF;
+  color: #102A43;
 }
 
 :root {
@@ -45,9 +46,9 @@ body {
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: #102A43;
+  background-color: #FFFFFF;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -95,5 +96,208 @@ body {
 .audit-log {
   font-size: 0.875rem;
   color: #666;
+}
+
+/* Custom dropdown styling to override browser defaults */
+select {
+  background-color: white !important;
+  color: #102A43 !important;
+}
+
+select:focus {
+  outline: none !important;
+  border-color: #102A43 !important;
+  box-shadow: 0 0 0 3px rgba(16, 42, 67, 0.1) !important;
+}
+
+/* Force override browser default dropdown colors */
+select option {
+  background-color: white !important;
+  color: #102A43 !important;
+}
+
+select option:checked {
+  background-color: #102A43 !important;
+  color: white !important;
+}
+
+select option:hover {
+  background-color: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+/* Additional overrides for different browsers */
+select option:focus {
+  background-color: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+select option:active {
+  background-color: #102A43 !important;
+  color: white !important;
+}
+
+/* Webkit specific overrides */
+select option::-webkit-option {
+  background-color: white !important;
+  color: #102A43 !important;
+}
+
+/* Firefox specific overrides */
+select option:-moz-any() {
+  background-color: white !important;
+  color: #102A43 !important;
+}
+
+/* Additional strong overrides for browser default blue colors */
+select option {
+  background: white !important;
+  color: #102A43 !important;
+}
+
+select option:hover,
+select option:focus,
+select option:active {
+  background: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+/* Override any blue highlight colors */
+select option:checked,
+select option[selected] {
+  background: #102A43 !important;
+  color: white !important;
+}
+
+/* Force override for all possible states */
+select option:not(:checked):hover {
+  background: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+/* Additional webkit overrides */
+select option::-webkit-option-checked {
+  background: #102A43 !important;
+  color: white !important;
+}
+
+/* Comprehensive override for all browser default blue colors */
+select, select * {
+  color: #102A43 !important;
+}
+
+select option {
+  background-color: white !important;
+  color: #102A43 !important;
+}
+
+/* Override any remaining blue colors with maximum specificity */
+html body select option:hover {
+  background-color: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+html body select option:focus {
+  background-color: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+html body select option:active {
+  background-color: #102A43 !important;
+  color: white !important;
+}
+
+/* Force override for selected state */
+html body select option:checked,
+html body select option[selected] {
+  background-color: #102A43 !important;
+  color: white !important;
+}
+
+/* Nuclear option - override everything with maximum specificity */
+html body div select option {
+  background-color: white !important;
+  color: #102A43 !important;
+}
+
+html body div select option:hover {
+  background-color: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+html body div select option:focus {
+  background-color: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+html body div select option:active {
+  background-color: #102A43 !important;
+  color: white !important;
+}
+
+html body div select option:checked {
+  background-color: #102A43 !important;
+  color: white !important;
+}
+
+/* Additional dropdown styling for better browser compatibility */
+select::-ms-expand {
+  display: none;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23102A43' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* Override browser default dropdown colors */
+select:focus option:checked {
+  background-color: #102A43 !important;
+  color: white !important;
+}
+
+/* Ensure dropdown options use theme colors */
+select option {
+  background-color: white !important;
+  color: #102A43 !important;
+}
+
+select option:focus {
+  background-color: #f1f5f9 !important;
+  color: #102A43 !important;
+}
+
+/* Ensure all form elements use consistent theme colors */
+input:focus, textarea:focus {
+  outline: none !important;
+  border-color: #102A43 !important;
+  box-shadow: 0 0 0 3px rgba(16, 42, 67, 0.1) !important;
+}
+
+/* Override any remaining browser default blue colors */
+*:focus {
+  outline-color: #102A43 !important;
+}
+
+/* Ensure consistent button styling */
+button:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(16, 42, 67, 0.1) !important;
+}
+
+/* Ensure main content uses full width */
+main {
+  width: 100%;
+}
+
+/* Ensure page content uses full width */
+.space-y-6 {
+  width: 100%;
 }
 

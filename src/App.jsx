@@ -1,3 +1,4 @@
+import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -11,8 +12,14 @@ import Reports from './pages/Reports'
 import AuditLogs from './pages/AuditLogs'
 import Settings from './pages/Settings'
 import Layout from './components/Layout'
+import { applyDropdownTheme } from './utils/dropdownTheme'
 
 function App() {
+  // Apply dropdown theme on app load
+  React.useEffect(() => {
+    applyDropdownTheme();
+  }, []);
+
   return (
     <AuthProvider>
       <Router>

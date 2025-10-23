@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { adminAPI } from '../utils/api'
 import { maskEmail, maskPhone, formatCurrency } from '../utils/pciCompliance'
 import { Search, Filter, Eye, MoreVertical, AlertCircle } from 'lucide-react'
+import CustomSelect from '../components/CustomSelect'
 
 const Users = () => {
   const [users, setUsers] = useState([])
@@ -103,45 +104,39 @@ const Users = () => {
   if (loading && users.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-          <p className="text-sm text-gray-600 mt-1">View and manage user accounts</p>
-        </div>
-      </div>
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-client-text-muted" />
             <input
               type="text"
               placeholder="Search by name, email, or user ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 bg-white text-client-text"
             />
           </div>
-          <select
+          <CustomSelect
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="all">All Users</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="suspended">Suspended</option>
-          </select>
-          <button className="flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+            onChange={setFilter}
+            options={[
+              { value: 'all', label: 'All Users' },
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'suspended', label: 'Suspended' }
+            ]}
+            placeholder="All Users"
+          />
+          <button className="flex items-center justify-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
             <Filter className="h-5 w-5 mr-2" />
             Apply Filters
           </button>
@@ -152,27 +147,27 @@ const Users = () => {
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-primary-500">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Contact
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Transactions
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Total Spent
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Last Active
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -182,33 +177,33 @@ const Users = () => {
                 <tr key={user.userId} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                      <div className="text-xs text-gray-500">{user.userId}</div>
+                      <div className="text-sm font-medium text-client-text">{user.name}</div>
+                      <div className="text-xs text-client-text-muted">{user.userId}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm text-gray-900 masked-data">{maskEmail(user.email)}</div>
-                      <div className="text-xs text-gray-500 masked-data">{maskPhone(user.phone)}</div>
+                      <div className="text-sm text-client-text masked-data">{maskEmail(user.email)}</div>
+                      <div className="text-xs text-client-text-muted masked-data">{maskPhone(user.phone)}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(user.status)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text">
                     {user.totalTransactions}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-client-text">
                     {formatCurrency(user.totalSpent)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text-muted">
                     {new Date(user.lastActive).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900 mr-3">
+                    <button className="text-primary-500 hover:text-primary-700 mr-3">
                       <Eye className="h-5 w-5" />
                     </button>
-                    <button className="text-gray-600 hover:text-gray-900">
+                    <button className="text-client-text-muted hover:text-client-text">
                       <MoreVertical className="h-5 w-5" />
                     </button>
                   </td>
@@ -219,22 +214,22 @@ const Users = () => {
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
-          <div className="text-sm text-gray-700">
+        <div className="bg-primary-100 px-6 py-3 flex items-center justify-between border-t border-primary-200">
+          <div className="text-sm text-client-text">
             Showing page {page} of {totalPages}
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-client-text bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-client-text bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>

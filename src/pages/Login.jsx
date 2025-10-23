@@ -31,13 +31,13 @@ const Login = () => {
     <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#1A2B4D' }}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 left-32 w-3 h-3 bg-blue-300 rounded-full animate-pulse delay-1000"></div>
-        <div className="absolute top-60 left-20 w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-2000"></div>
-        <div className="absolute top-80 left-40 w-5 h-5 bg-blue-400 rounded-full animate-pulse delay-500"></div>
-        <div className="absolute bottom-40 right-20 w-3 h-3 bg-blue-300 rounded-full animate-pulse delay-1500"></div>
-        <div className="absolute bottom-60 right-40 w-4 h-4 bg-blue-500 rounded-full animate-pulse delay-3000"></div>
-        <div className="absolute bottom-20 right-10 w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-2500"></div>
+        <div className="absolute top-20 left-10 w-4 h-4 bg-primary-400 rounded-full animate-pulse"></div>
+        <div className="absolute top-40 left-32 w-3 h-3 bg-primary-300 rounded-full animate-pulse delay-1000"></div>
+        <div className="absolute top-60 left-20 w-2 h-2 bg-primary-500 rounded-full animate-pulse delay-2000"></div>
+        <div className="absolute top-80 left-40 w-5 h-5 bg-primary-400 rounded-full animate-pulse delay-500"></div>
+        <div className="absolute bottom-40 right-20 w-3 h-3 bg-primary-300 rounded-full animate-pulse delay-1500"></div>
+        <div className="absolute bottom-60 right-40 w-4 h-4 bg-primary-500 rounded-full animate-pulse delay-3000"></div>
+        <div className="absolute bottom-20 right-10 w-2 h-2 bg-primary-400 rounded-full animate-pulse delay-2500"></div>
       </div>
 
       {/* Network Pattern */}
@@ -65,8 +65,8 @@ const Login = () => {
           <div className="bg-white rounded-2xl shadow-2xl p-8 relative">
             {/* Card Header */}
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">BreakFree</h2>
-              <p className="text-sm text-gray-600">Admin Dashboard Access</p>
+              <h2 className="text-2xl font-bold text-client-text mb-2">BreakFree</h2>
+              <p className="text-sm text-client-text-muted">Admin Dashboard Access</p>
             </div>
 
             {/* Form */}
@@ -78,7 +78,7 @@ const Login = () => {
               )}
 
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="username" className="block text-sm font-medium text-client-text mb-2">
                   Username
                 </label>
                 <input
@@ -89,13 +89,13 @@ const Login = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-client-text placeholder-client-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
                   placeholder="Username"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-client-text mb-2">
                   Password
                 </label>
                 <input
@@ -106,7 +106,7 @@ const Login = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-client-text placeholder-client-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
                   placeholder="Password"
                 />
               </div>
@@ -115,7 +115,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="w-full py-3 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
@@ -139,22 +139,22 @@ const Login = () => {
             {/* Alternative Options */}
             <div className="mt-8 flex justify-center space-x-8">
               <div className="flex flex-col items-center space-y-2">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                  <User className="h-6 w-6 text-primary-500" />
                 </div>
-                <span className="text-xs text-gray-600">Identity</span>
+                <span className="text-xs text-client-text-muted">Identity</span>
               </div>
               <div className="flex flex-col items-center space-y-2">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <CreditCard className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                  <CreditCard className="h-6 w-6 text-primary-500" />
                 </div>
-                <span className="text-xs text-gray-600">Finance</span>
+                <span className="text-xs text-client-text-muted">Finance</span>
               </div>
             </div>
 
             {/* Footer */}
             <div className="mt-8 text-center">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-client-text-muted">
                 Secure admin access with PCI DSS compliance
               </p>
             </div>

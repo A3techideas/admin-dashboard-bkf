@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { adminAPI } from '../utils/api'
 import { formatCurrency, maskCardNumber, maskAccountNumber } from '../utils/pciCompliance'
 import { Search, Filter, Download, Eye, Shield } from 'lucide-react'
+import CustomSelect from '../components/CustomSelect'
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([])
@@ -105,7 +106,7 @@ const Transactions = () => {
 
   const getTypeBadge = (type) => {
     const styles = {
-      bill_payment: 'bg-blue-100 text-blue-800',
+      bill_payment: 'bg-primary-100 text-primary-800',
       money_transfer: 'bg-purple-100 text-purple-800',
       card_payment: 'bg-pink-100 text-pink-800',
       savings: 'bg-green-100 text-green-800'
@@ -136,7 +137,7 @@ const Transactions = () => {
   if (loading && transactions.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     )
   }
@@ -144,12 +145,8 @@ const Transactions = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Transactions</h2>
-          <p className="text-sm text-gray-600 mt-1">Monitor all financial transactions</p>
-        </div>
-        <button className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+      <div className="flex items-center justify-end mb-6">
+        <button className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
           <Download className="h-5 w-5 mr-2" />
           Export
         </button>
@@ -159,37 +156,39 @@ const Transactions = () => {
       <div className="bg-white rounded-lg shadow p-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-client-text-muted" />
             <input
               type="text"
               placeholder="Search transactions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 bg-white text-client-text"
             />
           </div>
-          <select
+          <CustomSelect
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="all">All Types</option>
-            <option value="bill_payment">Bill Payment</option>
-            <option value="money_transfer">Money Transfer</option>
-            <option value="card_payment">Card Payment</option>
-            <option value="savings">Savings</option>
-          </select>
-          <select
+            onChange={setTypeFilter}
+            options={[
+              { value: 'all', label: 'All Types' },
+              { value: 'bill_payment', label: 'Bill Payment' },
+              { value: 'money_transfer', label: 'Money Transfer' },
+              { value: 'card_payment', label: 'Card Payment' },
+              { value: 'savings', label: 'Savings' }
+            ]}
+            placeholder="All Types"
+          />
+          <CustomSelect
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="all">All Status</option>
-            <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
-            <option value="failed">Failed</option>
-          </select>
-          <button className="flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+            onChange={setStatusFilter}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'failed', label: 'Failed' }
+            ]}
+            placeholder="All Status"
+          />
+          <button className="flex items-center justify-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
             <Filter className="h-5 w-5 mr-2" />
             Apply
           </button>
@@ -200,27 +199,27 @@ const Transactions = () => {
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-primary-500">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Transaction ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Payment Method
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -230,31 +229,31 @@ const Transactions = () => {
                 <tr key={txn.transactionId} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{txn.transactionId}</div>
-                      <div className="text-xs text-gray-500">{txn.description}</div>
+                      <div className="text-sm font-medium text-client-text">{txn.transactionId}</div>
+                      <div className="text-xs text-client-text-muted">{txn.description}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getTypeBadge(txn.type)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-bold text-gray-900">
+                    <div className="text-sm font-bold text-client-text">
                       {formatCurrency(txn.amount, txn.currency)}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 masked-data">
+                    <div className="text-sm text-client-text masked-data">
                       {maskPaymentMethod(txn.paymentMethod)}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(txn.status)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text-muted">
                     {new Date(txn.createdAt).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900">
+                    <button className="text-primary-500 hover:text-primary-700">
                       <Eye className="h-5 w-5" />
                     </button>
                   </td>
@@ -265,22 +264,22 @@ const Transactions = () => {
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
-          <div className="text-sm text-gray-700">
+        <div className="bg-primary-100 px-6 py-3 flex items-center justify-between border-t border-primary-200">
+          <div className="text-sm text-client-text">
             Showing page {page} of {totalPages}
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-client-text bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-client-text bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>

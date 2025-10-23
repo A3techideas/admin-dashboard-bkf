@@ -3,6 +3,7 @@ import { adminAPI } from '../utils/api'
 import { formatCurrency } from '../utils/pciCompliance'
 import { TrendingUp, DollarSign, Users, Activity, Calendar } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import CustomSelect from '../components/CustomSelect'
 
 const Analytics = () => {
   const [dateRange, setDateRange] = useState('30d')
@@ -84,7 +85,7 @@ const Analytics = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     )
   }
@@ -92,31 +93,29 @@ const Analytics = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Analytics</h2>
-          <p className="text-sm text-gray-600 mt-1">Detailed insights and trendss</p>
+          <h2 className="text-2xl font-bold text-client-text">Analytics</h2>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-5 w-5 text-gray-400" />
-            <select
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-            >
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="90d">Last 90 days</option>
-              <option value="1y">Last year</option>
-            </select>
-          </div>
+        <div className="flex items-center space-x-2">
+          <Calendar className="h-5 w-5 text-client-text-muted" />
+          <CustomSelect
+            value={dateRange}
+            onChange={setDateRange}
+            options={[
+              { value: '7d', label: 'Last 7 days' },
+              { value: '30d', label: 'Last 30 days' },
+              { value: '90d', label: 'Last 90 days' },
+              { value: '1y', label: 'Last year' }
+            ]}
+            placeholder="Last 30 days"
+          />
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow p-6 text-white">
+        <div className="bg-primary-500 rounded-lg shadow p-6 text-white">
           <div className="flex items-center justify-between mb-2">
             <DollarSign className="h-8 w-8" />
             <TrendingUp className="h-5 w-5" />
@@ -124,7 +123,7 @@ const Analytics = () => {
           <p className="text-sm opacity-90">Total Revenue</p>
           <p className="text-3xl font-bold mt-1">{formatCurrency(data.summary.totalRevenue)}</p>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow p-6 text-white">
+        <div className="bg-primary-500 rounded-lg shadow p-6 text-white">
           <div className="flex items-center justify-between mb-2">
             <Activity className="h-8 w-8" />
             <TrendingUp className="h-5 w-5" />
@@ -132,7 +131,7 @@ const Analytics = () => {
           <p className="text-sm opacity-90">Total Transactions</p>
           <p className="text-3xl font-bold mt-1">{data.summary.totalTransactions.toLocaleString()}</p>
         </div>
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow p-6 text-white">
+        <div className="bg-primary-500 rounded-lg shadow p-6 text-white">
           <div className="flex items-center justify-between mb-2">
             <DollarSign className="h-8 w-8" />
             <TrendingUp className="h-5 w-5" />
@@ -140,7 +139,7 @@ const Analytics = () => {
           <p className="text-sm opacity-90">Avg Transaction</p>
           <p className="text-3xl font-bold mt-1">{formatCurrency(data.summary.averageTransaction)}</p>
         </div>
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow p-6 text-white">
+        <div className="bg-primary-500 rounded-lg shadow p-6 text-white">
           <div className="flex items-center justify-between mb-2">
             <Users className="h-8 w-8" />
             <TrendingUp className="h-5 w-5" />
@@ -152,14 +151,14 @@ const Analytics = () => {
 
       {/* Revenue Chart */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Over Time</h3>
+        <h3 className="text-lg font-semibold text-client-text mb-4">Revenue Over Time</h3>
         <div style={{ width: '100%', height: '350px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data.revenueByDay}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#102A43" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#102A43" stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -169,7 +168,7 @@ const Analytics = () => {
               <Area 
                 type="monotone" 
                 dataKey="revenue" 
-                stroke="#0ea5e9" 
+                stroke="#102A43" 
                 fillOpacity={1} 
                 fill="url(#colorRevenue)"
                 name="Revenue"
@@ -181,18 +180,18 @@ const Analytics = () => {
 
       {/* Transactions by Type */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Transactions by Type</h3>
+        <h3 className="text-lg font-semibold text-client-text mb-4">Transactions by Type</h3>
         <div style={{ width: '100%', height: '350px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data.transactionsByType}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="type" />
-              <YAxis yAxisId="left" orientation="left" stroke="#0ea5e9" />
-              <YAxis yAxisId="right" orientation="right" stroke="#10b981" />
+              <YAxis yAxisId="left" orientation="left" stroke="#102A43" />
+              <YAxis yAxisId="right" orientation="right" stroke="#102A43" />
               <Tooltip />
               <Legend />
-              <Bar yAxisId="left" dataKey="count" fill="#0ea5e9" name="Count" />
-              <Bar yAxisId="right" dataKey="amount" fill="#10b981" name="Amount ($)" />
+              <Bar yAxisId="left" dataKey="count" fill="#102A43" name="Count" />
+              <Bar yAxisId="right" dataKey="amount" fill="#102A43" name="Amount ($)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -200,7 +199,7 @@ const Analytics = () => {
 
       {/* User Growth */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">User Growth Trend</h3>
+        <h3 className="text-lg font-semibold text-client-text mb-4">User Growth Trend</h3>
         <div style={{ width: '100%', height: '300px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.userGrowth}>
@@ -212,7 +211,7 @@ const Analytics = () => {
               <Line 
                 type="monotone" 
                 dataKey="users" 
-                stroke="#0ea5e9" 
+                stroke="#102A43" 
                 strokeWidth={3}
                 name="Active Users"
               />

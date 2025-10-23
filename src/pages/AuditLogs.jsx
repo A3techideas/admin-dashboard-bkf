@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../utils/api'
 import { Search, Shield, Clock, User } from 'lucide-react'
+import CustomSelect from '../components/CustomSelect'
 
 const AuditLogs = () => {
   const [logs, setLogs] = useState([])
@@ -113,7 +114,7 @@ const AuditLogs = () => {
 
   const getActionBadge = (action) => {
     const styles = {
-      ADMIN_LOGIN: 'bg-blue-100 text-blue-800',
+      ADMIN_LOGIN: 'bg-primary-100 text-primary-800',
       ADMIN_LOGOUT: 'bg-gray-100 text-gray-800',
       VIEW_USER: 'bg-purple-100 text-purple-800',
       UPDATE_TICKET: 'bg-green-100 text-green-800',
@@ -143,11 +144,7 @@ const AuditLogs = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Audit Logs</h2>
-          <p className="text-sm text-gray-600 mt-1">Track all administrative actions</p>
-        </div>
+      <div className="flex items-center justify-end mb-6">
         <div className="flex items-center space-x-2">
           <Shield className="h-5 w-5 text-green-600" />
           <span className="text-sm text-gray-600">PCI DSS Compliant Logging</span>
@@ -167,18 +164,19 @@ const AuditLogs = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
-          <select
+          <CustomSelect
             value={actionFilter}
-            onChange={(e) => setActionFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="all">All Actions</option>
-            <option value="ADMIN_LOGIN">Admin Login</option>
-            <option value="VIEW_USER">View User</option>
-            <option value="UPDATE_TICKET">Update Ticket</option>
-            <option value="DOWNLOAD_REPORT">Download Report</option>
-            <option value="FAILED_LOGIN">Failed Login</option>
-          </select>
+            onChange={setActionFilter}
+            options={[
+              { value: 'all', label: 'All Actions' },
+              { value: 'ADMIN_LOGIN', label: 'Admin Login' },
+              { value: 'VIEW_USER', label: 'View User' },
+              { value: 'UPDATE_TICKET', label: 'Update Ticket' },
+              { value: 'DOWNLOAD_REPORT', label: 'Download Report' },
+              { value: 'FAILED_LOGIN', label: 'Failed Login' }
+            ]}
+            placeholder="All Actions"
+          />
         </div>
       </div>
 
@@ -243,8 +241,8 @@ const AuditLogs = () => {
       </div>
 
       {/* Information */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
+      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <p className="text-sm text-primary-800">
           <strong>Security Notice:</strong> All administrative actions are logged and monitored for security compliance. 
           Logs are retained for 90 days as per PCI DSS requirements.
         </p>

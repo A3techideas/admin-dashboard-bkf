@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Download, FileText, Calendar, TrendingUp } from 'lucide-react'
+import CustomSelect from '../components/CustomSelect'
 
 const Reports = () => {
   const [reportType, setReportType] = useState('transactions')
@@ -45,46 +46,40 @@ const Reports = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Reports</h2>
-          <p className="text-sm text-gray-600 mt-1">Generate and download reports</p>
-        </div>
-      </div>
 
       {/* Generate New Report */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Generate New Report</h3>
+        <h3 className="text-lg font-semibold text-client-text mb-4">Generate New Report</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <select
+          <CustomSelect
             value={reportType}
-            onChange={(e) => setReportType(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-          >
-            <option value="transactions">Transactions Report</option>
-            <option value="users">User Activity Report</option>
-            <option value="revenue">Revenue Analytics</option>
-            <option value="compliance">Compliance Report</option>
-          </select>
+            onChange={setReportType}
+            options={[
+              { value: 'transactions', label: 'Transactions Report' },
+              { value: 'users', label: 'User Activity Report' },
+              { value: 'revenue', label: 'Revenue Analytics' },
+              { value: 'compliance', label: 'Compliance Report' }
+            ]}
+            placeholder="Select Report Type"
+          />
           <input
             type="date"
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
             placeholder="From Date"
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 bg-white text-client-text"
           />
           <input
             type="date"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
             placeholder="To Date"
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 bg-white text-client-text"
           />
           <button
             onClick={handleGenerateReport}
             disabled={generating}
-            className="flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+            className="flex items-center justify-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50"
           >
             {generating ? (
               <>
@@ -104,27 +99,27 @@ const Reports = () => {
       {/* Previous Reports */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Previous Reports</h3>
+          <h3 className="text-lg font-semibold text-client-text">Previous Reports</h3>
         </div>
         <div className="divide-y divide-gray-200">
           {reports.map((report) => (
             <div key={report.id} className="px-6 py-4 hover:bg-gray-50 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="h-12 w-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-primary-600" />
+                  <FileText className="h-6 w-6 text-primary-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{report.name}</p>
+                  <p className="text-sm font-medium text-client-text">{report.name}</p>
                   <div className="flex items-center space-x-4 mt-1">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-client-text-muted">
                       <Calendar className="inline h-3 w-3 mr-1" />
                       {new Date(report.date).toLocaleDateString()}
                     </span>
-                    <span className="text-xs text-gray-500">Size: {report.size}</span>
+                    <span className="text-xs text-client-text-muted">Size: {report.size}</span>
                   </div>
                 </div>
               </div>
-              <button className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+              <button className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </button>

@@ -11,161 +11,163 @@ const Settings = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
-        <p className="text-sm text-gray-600 mt-1">Manage admin dashboard settings</p>
-      </div>
-
+    <div className="space-y-6 w-full">
       {/* Security Settings */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white rounded-lg shadow overflow-hidden w-full">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
-            <Shield className="h-5 w-5 text-primary-600 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900">Security Settings</h3>
+            <Shield className="h-5 w-5 text-primary-500 mr-2" />
+            <h3 className="text-lg font-semibold text-client-text">Security Settings</h3>
           </div>
         </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Session Timeout (minutes)
-            </label>
-            <input
-              type="number"
-              value={sessionTimeout}
-              onChange={(e) => setSessionTimeout(e.target.value)}
-              className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Automatically log out after this period of inactivity
-            </p>
-          </div>
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Two-Factor Authentication</p>
-              <p className="text-xs text-gray-500">Require 2FA for all admin logins</p>
+        <div className="p-6 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+            <div className="w-full">
+              <label className="block text-sm font-medium text-client-text mb-2">
+                Session Timeout (minutes)
+              </label>
+              <input
+                type="number"
+                value={sessionTimeout}
+                onChange={(e) => setSessionTimeout(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 bg-white text-client-text"
+              />
+              <p className="text-xs text-client-text-muted mt-1">
+                Automatically log out after this period of inactivity
+              </p>
             </div>
-            <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm">
-              Configure
-            </button>
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Two-Factor Authentication</p>
+                <p className="text-xs text-client-text-muted">Require 2FA for all admin logins</p>
+              </div>
+              <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm">
+                Configure
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Notification Settings */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white rounded-lg shadow overflow-hidden w-full">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
-            <Bell className="h-5 w-5 text-primary-600 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900">Notification Settings</h3>
+            <Bell className="h-5 w-5 text-primary-500 mr-2" />
+            <h3 className="text-lg font-semibold text-client-text">Notification Settings</h3>
           </div>
         </div>
-        <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Email Notifications</p>
-              <p className="text-xs text-gray-500">Receive email alerts for important events</p>
-            </div>
-            <button
-              onClick={() => setEmailNotifications(!emailNotifications)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                emailNotifications ? 'bg-primary-600' : 'bg-gray-200'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  emailNotifications ? 'translate-x-6' : 'translate-x-1'
+        <div className="p-6 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Email Notifications</p>
+                <p className="text-xs text-client-text-muted">Receive email alerts for important events</p>
+              </div>
+              <button
+                onClick={() => setEmailNotifications(!emailNotifications)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  emailNotifications ? 'bg-primary-500' : 'bg-gray-200'
                 }`}
-              />
-            </button>
-          </div>
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Security Alerts</p>
-              <p className="text-xs text-gray-500">Get notified of suspicious activities</p>
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    emailNotifications ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
             </div>
-            <button
-              onClick={() => setSecurityAlerts(!securityAlerts)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                securityAlerts ? 'bg-primary-600' : 'bg-gray-200'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  securityAlerts ? 'translate-x-6' : 'translate-x-1'
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Security Alerts</p>
+                <p className="text-xs text-client-text-muted">Get notified of suspicious activities</p>
+              </div>
+              <button
+                onClick={() => setSecurityAlerts(!securityAlerts)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  securityAlerts ? 'bg-primary-500' : 'bg-gray-200'
                 }`}
-              />
-            </button>
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    securityAlerts ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* PCI DSS Compliance */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white rounded-lg shadow overflow-hidden w-full">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
             <Lock className="h-5 w-5 text-green-600 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900">PCI DSS Compliance</h3>
+            <h3 className="text-lg font-semibold text-client-text">PCI DSS Compliance</h3>
           </div>
         </div>
-        <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Card Number Masking</p>
-              <p className="text-xs text-gray-500">Always mask sensitive card information</p>
+        <div className="p-6 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Card Number Masking</p>
+                <p className="text-xs text-client-text-muted">Always mask sensitive card information</p>
+              </div>
+              <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                Enabled
+              </span>
             </div>
-            <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-              Enabled
-            </span>
-          </div>
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Audit Logging</p>
-              <p className="text-xs text-gray-500">Log all admin actions automatically</p>
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Audit Logging</p>
+                <p className="text-xs text-client-text-muted">Log all admin actions automatically</p>
+              </div>
+              <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                Active
+              </span>
             </div>
-            <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-              Active
-            </span>
-          </div>
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Data Encryption</p>
-              <p className="text-xs text-gray-500">Encrypt sensitive data at rest and in transit</p>
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Data Encryption</p>
+                <p className="text-xs text-client-text-muted">Encrypt sensitive data at rest and in transit</p>
+              </div>
+              <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                Enabled
+              </span>
             </div>
-            <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-              Enabled
-            </span>
           </div>
         </div>
       </div>
 
       {/* Data Management */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white rounded-lg shadow overflow-hidden w-full">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center">
-            <Database className="h-5 w-5 text-primary-600 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900">Data Management</h3>
+            <Database className="h-5 w-5 text-primary-500 mr-2" />
+            <h3 className="text-lg font-semibold text-client-text">Data Management</h3>
           </div>
         </div>
-        <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Export Data</p>
-              <p className="text-xs text-gray-500">Export analytics and reports</p>
+        <div className="p-6 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Export Data</p>
+                <p className="text-xs text-client-text-muted">Export analytics and reports</p>
+              </div>
+              <button className="px-4 py-2 border border-gray-300 text-client-text rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                Export
+              </button>
             </div>
-            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
-              Export
-            </button>
-          </div>
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-900">Data Retention</p>
-              <p className="text-xs text-gray-500">Configure data retention policies</p>
+            <div className="flex items-center justify-between py-3 w-full">
+              <div>
+                <p className="text-sm font-medium text-client-text">Data Retention</p>
+                <p className="text-xs text-client-text-muted">Configure data retention policies</p>
+              </div>
+              <button className="px-4 py-2 border border-gray-300 text-client-text rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                Configure
+              </button>
             </div>
-            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
-              Configure
-            </button>
           </div>
         </div>
       </div>
@@ -174,7 +176,7 @@ const Settings = () => {
       <div className="flex justify-end">
         <button
           onClick={handleSaveSettings}
-          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
         >
           Save Settings
         </button>

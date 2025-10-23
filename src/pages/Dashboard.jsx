@@ -63,11 +63,11 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-client-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard data...</p>
-          <p className="text-sm text-gray-500 mt-2">Please wait while we prepare your analytics</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
+          <p className="mt-4 text-client-text">Loading dashboard data...</p>
+          <p className="text-sm text-client-text-muted mt-2">Please wait while we prepare your analytics</p>
         </div>
       </div>
     )
@@ -75,7 +75,7 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-client-background flex items-center justify-center">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
           <div className="flex items-center mb-4">
             <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
@@ -136,7 +136,7 @@ const Dashboard = () => {
 
   const data = stats || mockStats
 
-  const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444']
+  const COLORS = ['#102A43', '#334E68', '#627D98', '#94a3b8']
 
   const StatCard = ({ title, value, icon: Icon, change, changeType, gradient }) => (
     <div className={`relative overflow-hidden rounded-xl shadow-lg p-6 ${gradient} transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl hover:brightness-110 cursor-pointer group`}>
@@ -187,7 +187,7 @@ const Dashboard = () => {
           icon={Users}
           change={data.monthlyGrowth}
           changeType="positive"
-          gradient="bg-gradient-to-br from-blue-500 to-blue-600"
+          gradient="bg-primary-500"
         />
         <StatCard
           title="Active Users"
@@ -195,7 +195,7 @@ const Dashboard = () => {
           icon={Activity}
           change={5.2}
           changeType="positive"
-          gradient="bg-gradient-to-br from-green-500 to-green-600"
+          gradient="bg-primary-500"
         />
         <StatCard
           title="Total Transactions"
@@ -203,7 +203,7 @@ const Dashboard = () => {
           icon={CreditCard}
           change={data.transactionGrowth}
           changeType="positive"
-          gradient="bg-gradient-to-br from-purple-500 to-purple-600"
+          gradient="bg-primary-500"
         />
         <StatCard
           title="Total Revenue"
@@ -211,7 +211,7 @@ const Dashboard = () => {
           icon={DollarSign}
           change={data.revenueGrowth}
           changeType="positive"
-          gradient="bg-gradient-to-br from-orange-500 to-orange-600"
+          gradient="bg-primary-500"
         />
       </div>
 
@@ -223,7 +223,7 @@ const Dashboard = () => {
           icon={Ticket}
           change={null}
           changeType={null}
-          gradient="bg-gradient-to-br from-red-500 to-red-600"
+          gradient="bg-primary-500"
         />
 
         <StatCard
@@ -232,7 +232,7 @@ const Dashboard = () => {
           icon={TrendingUp}
           change={null}
           changeType={null}
-          gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
+          gradient="bg-primary-500"
         />
 
         <StatCard
@@ -241,7 +241,7 @@ const Dashboard = () => {
           icon={Activity}
           change={null}
           changeType={null}
-          gradient="bg-gradient-to-br from-indigo-500 to-indigo-600"
+          gradient="bg-primary-500"
         />
       </div>
 
@@ -256,7 +256,7 @@ const Dashboard = () => {
         )}
         {/* Revenue Trend */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
+          <h3 className="text-lg font-semibold text-client-text mb-4">Revenue Trend</h3>
           <div style={{ width: '100%', height: '300px', minHeight: '300px' }}>
             {data.revenueData && data.revenueData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -269,7 +269,7 @@ const Dashboard = () => {
                   <Line 
                     type="monotone" 
                     dataKey="revenue" 
-                    stroke="#0ea5e9" 
+                    stroke="#102A43" 
                     strokeWidth={2}
                     name="Revenue"
                   />
@@ -285,7 +285,7 @@ const Dashboard = () => {
 
         {/* Transaction Types */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Transaction Types</h3>
+          <h3 className="text-lg font-semibold text-client-text mb-4">Transaction Types</h3>
           <div style={{ width: '100%', height: '300px', minHeight: '300px' }}>
             {data.transactionTypes && data.transactionTypes.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -320,7 +320,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 gap-6">
         {/* User Activity */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Active Users</h3>
+          <h3 className="text-lg font-semibold text-client-text mb-4">Daily Active Users</h3>
           <div style={{ width: '100%', height: '300px', minHeight: '300px' }}>
             {data.userActivity && data.userActivity.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -330,7 +330,7 @@ const Dashboard = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="users" fill="#0ea5e9" name="Active Users" />
+                  <Bar dataKey="users" fill="#102A43" name="Active Users" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -343,8 +343,8 @@ const Dashboard = () => {
       </div>
 
       {/* PCI DSS Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
+      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <p className="text-sm text-primary-800">
           <strong>Note:</strong> All financial data displayed is aggregated and anonymized in compliance with PCI DSS standards. 
           No sensitive cardholder data is stored or displayed in this dashboard.
         </p>
