@@ -54,10 +54,6 @@ const Login = () => {
         </svg>
       </div>
 
-      {/* Header Logo */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
-        <h1 className="text-2xl font-bold text-white">BreakFree</h1>
-      </div>
 
       {/* Main Content */}
       <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
