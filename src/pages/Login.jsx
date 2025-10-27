@@ -28,7 +28,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#1A2B4D' }}>
+    <div className="min-h-screen w-full relative overflow-hidden fixed inset-0" style={{ backgroundColor: '#1A2B4D' }}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-10 w-4 h-4 bg-primary-400 rounded-full animate-pulse"></div>

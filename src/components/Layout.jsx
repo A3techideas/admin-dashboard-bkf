@@ -11,65 +11,70 @@ import {
   Shield,
   Settings,
   LogOut,
-  Clock
+  Clock,
+  Menu,
+  X
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 const Layout = () => {
-  const { user, logout, sessionExpiry } = useAuth()
+  const { user, logout, sessionExpiry, extendSession } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState('15:00')
-  const [sessionStartTime, setSessionStartTime] = useState(null)
+  const [totalSeconds, setTotalSeconds] = useState(900) // 15 minutes = 900 seconds
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const intervalRef = useRef(null)
 
-  // Update timer immediately when sessionExpiry changes
+  // Start timer immediately when component mounts
   useEffect(() => {
-    console.log('SessionExpiry changed:', sessionExpiry, 'Current time:', Date.now())
-    
-    // Set session start time
-    if (sessionExpiry && !sessionStartTime) {
-      setSessionStartTime(Date.now())
-    }
+    console.log('Component mounted, starting timer')
     
     const updateTimer = () => {
-      let remaining = 0
-      
-      if (sessionExpiry) {
-        remaining = Math.max(0, sessionExpiry - Date.now())
-      } else if (sessionStartTime) {
-        // Use fallback: 15 minutes from session start
-        remaining = Math.max(0, (sessionStartTime + (15 * 60 * 1000)) - Date.now())
-      } else {
-        // Default: 15 minutes from now
-        remaining = 15 * 60 * 1000
-      }
-      
-      const minutes = Math.floor(remaining / 60000)
-      const seconds = Math.floor((remaining % 60000) / 1000)
-      const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`
-      
-      console.log('Timer update:', timeString, 'remaining ms:', remaining)
-      setTimeLeft(timeString)
-      
-      // Auto logout when session expires
-      if (remaining <= 0) {
-        console.log('Session expired, logging out...')
-        logout()
-      }
+      setTotalSeconds(prev => {
+        const newSeconds = prev - 1
+        console.log('Timer tick:', newSeconds, 'seconds remaining')
+        
+        if (newSeconds <= 0) {
+          console.log('Session expired, logging out...')
+          logout()
+          return 0
+        }
+        
+        return newSeconds
+      })
     }
     
-    // Update immediately
+    // Start timer immediately
     updateTimer()
     
-    // Update every 100ms for smooth countdown, then every second
-    const fastInterval = setInterval(updateTimer, 100)
-    const slowInterval = setInterval(updateTimer, 1000)
+    // Set up interval
+    intervalRef.current = setInterval(updateTimer, 1000)
     
     return () => {
-      clearInterval(fastInterval)
-      clearInterval(slowInterval)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
     }
-  }, [sessionExpiry, sessionStartTime, logout])
+  }, [logout]) // Add logout to dependencies
+
+  // Update timeLeft display when totalSeconds changes
+  useEffect(() => {
+    const minutes = Math.floor(totalSeconds / 60)
+    const seconds = totalSeconds % 60
+    const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`
+    setTimeLeft(timeString)
+    console.log('Display updated:', timeString, 'totalSeconds:', totalSeconds)
+  }, [totalSeconds])
+
+  // Reset timer when sessionExpiry changes
+  useEffect(() => {
+    if (sessionExpiry) {
+      console.log('Session expiry changed, resetting timer')
+      setTotalSeconds(900) // Reset to 15:00
+      setTimeLeft('15:00')
+    }
+  }, [sessionExpiry])
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -84,19 +89,47 @@ const Layout = () => {
 
   const isActive = (path) => location.pathname === path
 
+  const handleExtendSession = () => {
+    extendSession()
+    setTotalSeconds(900) // Reset to 15:00
+    setTimeLeft('15:00')
+    console.log('Session extended by 15 minutes')
+  }
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false)
+  }
+
   return (
     <div className="min-h-screen bg-client-background">
+      {/* Mobile menu overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={closeMobileMenu}
+        ></div>
+      )}
+
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-white to-gray-50 shadow-2xl border-r border-gray-100">
+      <div className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-white to-gray-50 shadow-2xl border-r border-gray-100 transform transition-transform duration-300 ease-in-out z-50 ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-center h-20 bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg">
+          <div className="flex items-center justify-between h-20 bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg px-4">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">B</span>
               </div>
               <h1 className="text-xl font-bold text-white">BreakFree Admin</h1>
             </div>
+            {/* Mobile close button */}
+            <button
+              onClick={closeMobileMenu}
+              className="lg:hidden text-white hover:text-gray-200 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
 
           {/* Navigation */}
@@ -107,6 +140,7 @@ const Layout = () => {
                 <Link
                   key={item.name}
                   to={item.href}
+                  onClick={closeMobileMenu}
                   className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 relative ${
                     isActive(item.href)
                       ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg transform scale-105'
@@ -142,11 +176,15 @@ const Layout = () => {
           {/* User info and logout */}
           <div className="p-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white">
             {/* Session timer */}
-            <div className={`mb-3 px-3 py-2 rounded-lg border shadow-sm ${
-              timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
-                ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-200' 
-                : 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200'
-            }`}>
+            <div 
+              className={`mb-3 px-3 py-2 rounded-lg border shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 ${
+                timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
+                  ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-200 hover:from-red-100 hover:to-red-200' 
+                  : 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200 hover:from-yellow-100 hover:to-yellow-200'
+              }`}
+              onClick={handleExtendSession}
+              title="Click to extend session by 15 minutes"
+            >
               <div className={`flex items-center text-xs ${
                 timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                   ? 'text-red-800' 
@@ -159,8 +197,11 @@ const Layout = () => {
                 }`}>
                   <Clock className="w-3 h-3" />
                 </div>
-                <div>
-                  <span className="font-bold text-sm">{timeLeft || '15:00'}</span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-sm">{timeLeft || '15:00'}</span>
+                    <span className="text-xs text-gray-500">({totalSeconds}s)</span>
+                  </div>
                   <p className={`text-xs ${
                     timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                       ? 'text-red-700' 
@@ -169,7 +210,7 @@ const Layout = () => {
                     {timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                       ? 'Expiring!' 
                       : 'Session'
-                  }</p>
+                    }</p>
                 </div>
               </div>
             </div>
@@ -200,22 +241,33 @@ const Layout = () => {
       </div>
 
       {/* Main content */}
-      <div className="ml-64">
+      <div className="lg:ml-64">
         {/* Header */}
         <header className="bg-white shadow-sm">
-          <div className="px-8 py-4">
+          <div className="px-4 py-4 lg:px-8">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-client-text">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              
+              <div className="flex-1 lg:flex-none">
+                <h2 className="text-xl lg:text-2xl font-bold text-client-text">
                   {navigation.find(item => isActive(item.href))?.name || 'Admin Dashboard'}
                 </h2>
               </div>
-              <div className="flex-1 flex justify-center">
+              
+              {/* Desktop tagline - hidden on mobile */}
+              <div className="hidden lg:flex flex-1 justify-center">
                 <p className="text-xl font-semibold text-primary-500 italic">
                   Your Money Your Control.
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
+              
+              <div className="hidden lg:flex items-center space-x-4">
                 <div className="text-sm text-client-text-muted">
                   {new Date().toLocaleDateString('en-US', { 
                     weekday: 'long', 
@@ -226,23 +278,38 @@ const Layout = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Mobile tagline and date */}
+            <div className="lg:hidden mt-2">
+              <p className="text-sm font-semibold text-primary-500 italic mb-1">
+                Your Money Your Control.
+              </p>
+              <div className="text-xs text-client-text-muted">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </div>
+            </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="p-8">
+        <main className="p-4 lg:p-8">
           <Outlet />
         </main>
 
         {/* PCI DSS Compliance Notice */}
-        <footer className="px-8 py-4 bg-white border-t border-gray-200">
-          <div className="flex items-center justify-between text-xs text-client-text-muted">
+        <footer className="px-4 py-4 lg:px-8 bg-white border-t border-gray-200">
+          <div className="flex flex-col lg:flex-row items-center justify-between text-xs text-client-text-muted space-y-2 lg:space-y-0">
             <div className="flex items-center">
               <Shield className="w-4 h-4 mr-2 text-green-600" />
-              <span>PCI DSS Compliant • All sensitive data is masked</span>
+              <span className="text-center lg:text-left">PCI DSS Compliant • All sensitive data is masked</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <div>
+            <div className="flex flex-col lg:flex-row items-center space-y-1 lg:space-y-0 lg:space-x-4">
+              <div className="text-center lg:text-left">
                 All admin actions are logged for security auditing
               </div>
               {/* Demo Mode Indicator */}
