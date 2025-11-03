@@ -2,6 +2,9 @@
 
 A PCI DSS compliant admin dashboard for BreakFree financial application.
 
+> **🚨 Having login issues?** → Read: [FINAL_SOLUTION.md](./FINAL_SOLUTION.md) | [DEBUGGING_INFO.md](./DEBUGGING_INFO.md)  
+> **🔗 New to this project?** Start here: [QUICK_START.md](./QUICK_START.md) | [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) | [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)
+
 ## Features
 
 - **Dashboard Analytics**: Real-time statistics and visualizations

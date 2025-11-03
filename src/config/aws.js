@@ -5,7 +5,7 @@ export const awsConfig = {
     userPoolClientId: import.meta.env.VITE_AWS_COGNITO_USER_POOL_CLIENT_ID || '7vfnnrecbdandieqk13mep6mst',
   },
   api: {
-    baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://8scms50sw3.execute-api.us-west-1.amazonaws.com',
+    baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://hglmst0fsi.execute-api.us-west-1.amazonaws.com',
   }
 }
 
