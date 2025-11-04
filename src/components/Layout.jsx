@@ -26,29 +26,32 @@ const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const intervalRef = useRef(null)
 
+  // Calculate remaining time from sessionExpiry
+  const calculateRemainingTime = () => {
+    if (!sessionExpiry) return 0
+    const remaining = Math.max(0, Math.floor((sessionExpiry - Date.now()) / 1000))
+    return remaining
+  }
+
   // Start timer immediately when component mounts
   useEffect(() => {
-    console.log('Component mounted, starting timer')
+    if (!sessionExpiry) return
     
     const updateTimer = () => {
-      setTotalSeconds(prev => {
-        const newSeconds = prev - 1
-        console.log('Timer tick:', newSeconds, 'seconds remaining')
-        
-        if (newSeconds <= 0) {
-          console.log('Session expired, logging out...')
-          logout()
-          return 0
-        }
-        
-        return newSeconds
-      })
+      const remaining = calculateRemainingTime()
+      setTotalSeconds(remaining)
+      
+      if (remaining <= 0) {
+        console.log('Session expired, logging out...')
+        logout()
+        return
+      }
     }
     
-    // Start timer immediately
+    // Update immediately
     updateTimer()
     
-    // Set up interval
+    // Set up interval to update every second
     intervalRef.current = setInterval(updateTimer, 1000)
     
     return () => {
@@ -56,7 +59,7 @@ const Layout = () => {
         clearInterval(intervalRef.current)
       }
     }
-  }, [logout]) // Add logout to dependencies
+  }, [sessionExpiry, logout])
 
   // Update timeLeft display when totalSeconds changes
   useEffect(() => {
@@ -64,15 +67,16 @@ const Layout = () => {
     const seconds = totalSeconds % 60
     const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`
     setTimeLeft(timeString)
-    console.log('Display updated:', timeString, 'totalSeconds:', totalSeconds)
   }, [totalSeconds])
 
-  // Reset timer when sessionExpiry changes
+  // Initialize timer when sessionExpiry is set
   useEffect(() => {
     if (sessionExpiry) {
-      console.log('Session expiry changed, resetting timer')
-      setTotalSeconds(900) // Reset to 15:00
-      setTimeLeft('15:00')
+      const remaining = calculateRemainingTime()
+      setTotalSeconds(remaining)
+      const minutes = Math.floor(remaining / 60)
+      const secs = remaining % 60
+      setTimeLeft(`${minutes}:${secs.toString().padStart(2, '0')}`)
     }
   }, [sessionExpiry])
 
@@ -268,6 +272,29 @@ const Layout = () => {
               </div>
               
               <div className="hidden lg:flex items-center space-x-4">
+                {/* Session Timer - Always Visible */}
+                <div 
+                  className={`px-4 py-2 rounded-lg border shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 ${
+                    timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
+                      ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-300 hover:from-red-100 hover:to-red-200' 
+                      : 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-300 hover:from-yellow-100 hover:to-yellow-200'
+                  }`}
+                  onClick={handleExtendSession}
+                  title="Click to extend session by 15 minutes"
+                >
+                  <div className={`flex items-center space-x-2 ${timeLeft && parseInt(timeLeft.split(':')[0]) < 2 ? 'text-red-800' : 'text-yellow-800'}`}>
+                    <Clock className={`w-4 h-4 ${timeLeft && parseInt(timeLeft.split(':')[0]) < 2 ? 'animate-pulse' : ''}`} />
+                    <div className="flex flex-col">
+                      <span className={`font-bold text-sm ${timeLeft && parseInt(timeLeft.split(':')[0]) < 2 ? 'text-red-900' : 'text-yellow-900'}`}>
+                        Session: {timeLeft || '15:00'}
+                      </span>
+                      {timeLeft && parseInt(timeLeft.split(':')[0]) < 2 && (
+                        <span className="text-xs text-red-700 font-medium">Expiring Soon!</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="text-sm text-client-text-muted">
                   {new Date().toLocaleDateString('en-US', { 
                     weekday: 'long', 
@@ -284,7 +311,29 @@ const Layout = () => {
               <p className="text-sm font-semibold text-primary-500 italic mb-1">
                 Your Money Your Control.
               </p>
-              <div className="text-xs text-client-text-muted">
+              {/* Mobile Session Timer */}
+              <div 
+                className={`mt-2 px-3 py-2 rounded-lg border shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 ${
+                  timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
+                    ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-300 hover:from-red-100 hover:to-red-200' 
+                    : 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-300 hover:from-yellow-100 hover:to-yellow-200'
+                }`}
+                onClick={handleExtendSession}
+                title="Click to extend session by 15 minutes"
+              >
+                <div className={`flex items-center justify-between ${timeLeft && parseInt(timeLeft.split(':')[0]) < 2 ? 'text-red-800' : 'text-yellow-800'}`}>
+                  <div className="flex items-center space-x-2">
+                    <Clock className={`w-4 h-4 ${timeLeft && parseInt(timeLeft.split(':')[0]) < 2 ? 'animate-pulse' : ''}`} />
+                    <span className={`font-bold text-sm ${timeLeft && parseInt(timeLeft.split(':')[0]) < 2 ? 'text-red-900' : 'text-yellow-900'}`}>
+                      Session: {timeLeft || '15:00'}
+                    </span>
+                  </div>
+                  {timeLeft && parseInt(timeLeft.split(':')[0]) < 2 && (
+                    <span className="text-xs text-red-700 font-medium">Expiring!</span>
+                  )}
+                </div>
+              </div>
+              <div className="text-xs text-client-text-muted mt-2">
                 {new Date().toLocaleDateString('en-US', { 
                   weekday: 'long', 
                   year: 'numeric', 

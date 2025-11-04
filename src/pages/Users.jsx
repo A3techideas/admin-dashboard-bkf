@@ -4,55 +4,8 @@ import { maskEmail, maskPhone, formatCurrency } from '../utils/pciCompliance'
 import { Search, Filter, Eye, MoreVertical, AlertCircle } from 'lucide-react'
 import CustomSelect from '../components/CustomSelect'
 
-const Users = () => {
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filter, setFilter] = useState('all')
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-
-  useEffect(() => {
-    fetchUsers()
-  }, [page, filter, searchTerm])
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true)
-      
-      // Demo mode - check if we're in development
-      const isDemoMode = import.meta.env.VITE_API_BASE_URL === 'http://localhost:3001' || 
-                        !import.meta.env.VITE_API_BASE_URL ||
-                        import.meta.env.VITE_API_BASE_URL.includes('localhost')
-      
-      if (isDemoMode) {
-        // Demo mode - use mock data
-        console.log('🎭 Demo mode: Using mock users data')
-        setUsers(mockUsers)
-        setTotalPages(5)
-        setLoading(false)
-        return
-      }
-      
-      // Production mode - fetch from API
-      const response = await adminAPI.getUsers({
-        page,
-        limit: 20,
-        filter,
-        search: searchTerm
-      })
-      setUsers(response.data.users || mockUsers)
-      setTotalPages(response.data.totalPages || 5)
-    } catch (err) {
-      console.error('Error fetching users:', err)
-      setUsers(mockUsers)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Mock data
-  const mockUsers = [
+// Mock data - defined outside component to avoid scope issues
+const mockUsers = [
     {
       userId: 'user-001',
       name: 'John Doe',
@@ -86,7 +39,62 @@ const Users = () => {
       totalSpent: 4560.00,
       lastActive: '2024-09-15'
     }
-  ]
+]
+
+const Users = () => {
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filter, setFilter] = useState('all')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+
+  useEffect(() => {
+    fetchUsers()
+  }, [page, filter, searchTerm])
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      // Demo mode - check if we're in development
+      const isDemoMode = import.meta.env.VITE_API_BASE_URL === 'http://localhost:3001' || 
+                        !import.meta.env.VITE_API_BASE_URL ||
+                        import.meta.env.VITE_API_BASE_URL.includes('localhost')
+      
+      if (isDemoMode) {
+        // Demo mode - use mock data
+        console.log('🎭 Demo mode: Using mock users data')
+        setUsers(mockUsers)
+        setTotalPages(5)
+        setLoading(false)
+        return
+      }
+      
+      // Production mode - fetch from API
+      console.log('📡 Fetching users from API...')
+      const response = await adminAPI.getUsers({
+        page,
+        limit: 20,
+        filter,
+        search: searchTerm
+      })
+      
+      console.log('✅ API response:', response.data)
+      setUsers(response.data?.users || response.data || mockUsers)
+      setTotalPages(response.data?.totalPages || response.data?.pagination?.totalPages || 5)
+    } catch (err) {
+      console.error('Error fetching users:', err)
+      setError(err.message || 'Failed to load users')
+      // Fallback to mock data on error
+      setUsers(mockUsers)
+      setTotalPages(5)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const getStatusBadge = (status) => {
     const styles = {
@@ -101,16 +109,30 @@ const Users = () => {
     )
   }
 
+  // Always render something - never return null or undefined
   if (loading && users.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
+          <p className="mt-4 text-client-text">Loading users...</p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 mr-2" />
+            <div className="text-sm text-red-800">
+              <strong>Error:</strong> {error}. Showing mock data.
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4">
@@ -173,42 +195,53 @@ const Users = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr key={user.userId} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-client-text">{user.name}</div>
-                      <div className="text-xs text-client-text-muted">{user.userId}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm text-client-text masked-data">{maskEmail(user.email)}</div>
-                      <div className="text-xs text-client-text-muted masked-data">{maskPhone(user.phone)}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(user.status)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text">
-                    {user.totalTransactions}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-client-text">
-                    {formatCurrency(user.totalSpent)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text-muted">
-                    {new Date(user.lastActive).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-primary-500 hover:text-primary-700 mr-3">
-                      <Eye className="h-5 w-5" />
-                    </button>
-                    <button className="text-client-text-muted hover:text-client-text">
-                      <MoreVertical className="h-5 w-5" />
-                    </button>
+              {!users || users.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="px-6 py-8 text-center text-client-text-muted">
+                    No users found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                users.map((user) => {
+                  if (!user || !user.userId) return null
+                  return (
+                    <tr key={user.userId} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-client-text">{user.name || 'N/A'}</div>
+                          <div className="text-xs text-client-text-muted">{user.userId || 'N/A'}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm text-client-text masked-data">{maskEmail(user.email || '')}</div>
+                          <div className="text-xs text-client-text-muted masked-data">{maskPhone(user.phone || '')}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(user.status || 'inactive')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text">
+                        {user.totalTransactions || 0}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-client-text">
+                        {formatCurrency(user.totalSpent || 0)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-client-text-muted">
+                        {user.lastActive ? new Date(user.lastActive).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button className="text-primary-500 hover:text-primary-700 mr-3">
+                          <Eye className="h-5 w-5" />
+                        </button>
+                        <button className="text-client-text-muted hover:text-client-text">
+                          <MoreVertical className="h-5 w-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
             </tbody>
           </table>
         </div>

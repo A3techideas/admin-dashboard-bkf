@@ -5,6 +5,45 @@ import { TrendingUp, DollarSign, Users, Activity, Calendar } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import CustomSelect from '../components/CustomSelect'
 
+// Mock data - defined outside component
+const mockAnalytics = {
+  summary: {
+    totalRevenue: 892450.75,
+    totalTransactions: 45678,
+    averageTransaction: 19.54,
+    activeUsers: 8932
+  },
+  revenueByDay: [
+    { date: '2025-01-01', revenue: 28500 },
+    { date: '2025-01-02', revenue: 31200 },
+    { date: '2025-01-03', revenue: 29800 },
+    { date: '2025-01-04', revenue: 35600 },
+    { date: '2025-01-05', revenue: 33100 },
+    { date: '2025-01-06', revenue: 27900 },
+    { date: '2025-01-07', revenue: 24800 },
+  ],
+  transactionsByType: [
+    { type: 'Bill Payment', count: 15234, amount: 325000 },
+    { type: 'Money Transfer', count: 12456, amount: 280000 },
+    { type: 'Savings', count: 9876, amount: 195000 },
+    { type: 'Card Payment', count: 8112, amount: 92450 },
+  ],
+  userGrowth: [
+    { month: 'Jan', users: 8932 },
+    { month: 'Feb', users: 9200 },
+    { month: 'Mar', users: 9500 },
+    { month: 'Apr', users: 9800 },
+    { month: 'May', users: 10100 },
+    { month: 'Jun', users: 10400 },
+    { month: 'Jul', users: 10700 },
+    { month: 'Aug', users: 11000 },
+    { month: 'Sep', users: 11300 },
+    { month: 'Oct', users: 11600 },
+    { month: 'Nov', users: 11900 },
+    { month: 'Dec', users: 12200 },
+  ]
+}
+
 const Analytics = () => {
   const [dateRange, setDateRange] = useState('30d')
   const [analytics, setAnalytics] = useState(null)
@@ -31,9 +70,35 @@ const Analytics = () => {
         return
       }
       
-      // Production mode - fetch from API
-      const response = await adminAPI.getTransactionAnalytics({ dateRange })
-      setAnalytics(response.data || mockAnalytics)
+      // Production mode - fetch from multiple API endpoints
+      console.log('📡 Fetching analytics data from API...')
+      
+      // Fetch all analytics data in parallel
+      const [transactionAnalytics, revenueAnalytics, userAnalytics, dashboardStats] = await Promise.allSettled([
+        adminAPI.getTransactionAnalytics({ dateRange }),
+        adminAPI.getRevenueAnalytics({ dateRange }),
+        adminAPI.getUserAnalytics({ dateRange }),
+        adminAPI.getDashboardStats()
+      ])
+      
+      // Process API responses
+      const transactionData = transactionAnalytics.status === 'fulfilled' ? transactionAnalytics.value.data : null
+      const revenueData = revenueAnalytics.status === 'fulfilled' ? revenueAnalytics.value.data : null
+      const userData = userAnalytics.status === 'fulfilled' ? userAnalytics.value.data : null
+      const statsData = dashboardStats.status === 'fulfilled' ? dashboardStats.value.data : null
+      
+      console.log('✅ Analytics API responses:', { transactionData, revenueData, userData, statsData })
+      
+      // Transform API data to match chart structure
+      const transformedAnalytics = transformApiDataToAnalytics({
+        transactionData,
+        revenueData,
+        userData,
+        statsData,
+        dateRange
+      })
+      
+      setAnalytics(transformedAnalytics)
     } catch (err) {
       console.error('Error fetching analytics:', err)
       setAnalytics(mockAnalytics)
@@ -42,43 +107,60 @@ const Analytics = () => {
     }
   }
 
-  const mockAnalytics = {
-    summary: {
-      totalRevenue: 892450.75,
-      totalTransactions: 45678,
-      averageTransaction: 19.54,
-      activeUsers: 8932
-    },
-    revenueByDay: [
-      { date: '2025-01-01', revenue: 28500 },
-      { date: '2025-01-02', revenue: 31200 },
-      { date: '2025-01-03', revenue: 29800 },
-      { date: '2025-01-04', revenue: 35600 },
-      { date: '2025-01-05', revenue: 33100 },
-      { date: '2025-01-06', revenue: 27900 },
-      { date: '2025-01-07', revenue: 24800 },
-    ],
-    transactionsByType: [
-      { type: 'Bill Payment', count: 15234, amount: 325000 },
-      { type: 'Money Transfer', count: 12456, amount: 280000 },
-      { type: 'Savings', count: 9876, amount: 195000 },
-      { type: 'Card Payment', count: 8112, amount: 92450 },
-    ],
-    userGrowth: [
-      { month: 'Jan', users: 8932 },
-      { month: 'Feb', users: 9200 },
-      { month: 'Mar', users: 9500 },
-      { month: 'Apr', users: 9800 },
-      { month: 'May', users: 10100 },
-      { month: 'Jun', users: 10400 },
-      { month: 'Jul', users: 10700 },
-      { month: 'Aug', users: 11000 },
-      { month: 'Sep', users: 11300 },
-      { month: 'Oct', users: 11600 },
-      { month: 'Nov', users: 11900 },
-      { month: 'Dec', users: 12200 },
-    ]
+  // Transform API response data to match chart structure
+  const transformApiDataToAnalytics = ({ transactionData, revenueData, userData, statsData, dateRange }) => {
+    // Use API data if available, otherwise fall back to mock data
+    const summary = statsData?.summary || transactionData?.summary || {
+      totalRevenue: revenueData?.totalRevenue || 0,
+      totalTransactions: transactionData?.totalTransactions || 0,
+      averageTransaction: transactionData?.averageTransaction || 0,
+      activeUsers: userData?.activeUsers || statsData?.activeUsers || 0
+    }
+
+    // Format revenue by day from API response
+    let revenueByDay = revenueData?.revenueByDay || transactionData?.revenueByDay || []
+    if (revenueByDay.length > 0 && !revenueByDay[0].date) {
+      // If API returns different format, transform it
+      revenueByDay = revenueByDay.map(item => ({
+        date: item.date || item.day || item.timestamp,
+        revenue: item.revenue || item.amount || item.value || 0
+      }))
+    }
+
+    // Format transactions by type from API response
+    let transactionsByType = transactionData?.transactionsByType || transactionData?.byType || []
+    if (transactionsByType.length > 0 && !transactionsByType[0].type) {
+      // Transform if needed
+      transactionsByType = transactionsByType.map(item => ({
+        type: item.type || item.name || item.category || 'Other',
+        count: item.count || item.transactionCount || item.number || 0,
+        amount: item.amount || item.totalAmount || item.value || 0
+      }))
+    }
+
+    // Format user growth from API response
+    let userGrowth = userData?.userGrowth || userData?.growth || []
+    if (userGrowth.length > 0 && !userGrowth[0].month) {
+      // Transform if needed
+      userGrowth = userGrowth.map(item => ({
+        month: item.month || item.period || item.date || 'N/A',
+        users: item.users || item.count || item.total || 0
+      }))
+    }
+
+    return {
+      summary: {
+        totalRevenue: summary.totalRevenue || 0,
+        totalTransactions: summary.totalTransactions || 0,
+        averageTransaction: summary.averageTransaction || (summary.totalRevenue / summary.totalTransactions) || 0,
+        activeUsers: summary.activeUsers || 0
+      },
+      revenueByDay: revenueByDay.length > 0 ? revenueByDay : mockAnalytics.revenueByDay,
+      transactionsByType: transactionsByType.length > 0 ? transactionsByType : mockAnalytics.transactionsByType,
+      userGrowth: userGrowth.length > 0 ? userGrowth : mockAnalytics.userGrowth
+    }
   }
+
 
   const data = analytics || mockAnalytics
 
@@ -154,7 +236,7 @@ const Analytics = () => {
         <h3 className="text-lg font-semibold text-client-text mb-4">Revenue Over Time</h3>
         <div style={{ width: '100%', height: '350px' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data.revenueByDay}>
+            <AreaChart data={data.revenueByDay || []}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#102A43" stopOpacity={0.8}/>
@@ -162,9 +244,30 @@ const Analytics = () => {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip formatter={(value) => formatCurrency(value)} />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(value) => {
+                  if (!value) return ''
+                  try {
+                    const date = new Date(value)
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                  } catch {
+                    return value.toString().substring(0, 10)
+                  }
+                }}
+              />
+              <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
+              <Tooltip 
+                formatter={(value) => formatCurrency(value)}
+                labelFormatter={(label) => {
+                  try {
+                    const date = new Date(label)
+                    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                  } catch {
+                    return label
+                  }
+                }}
+              />
               <Area 
                 type="monotone" 
                 dataKey="revenue" 
@@ -183,15 +286,32 @@ const Analytics = () => {
         <h3 className="text-lg font-semibold text-client-text mb-4">Transactions by Type</h3>
         <div style={{ width: '100%', height: '350px' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data.transactionsByType}>
+            <BarChart data={data.transactionsByType || []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="type" />
-              <YAxis yAxisId="left" orientation="left" stroke="#102A43" />
-              <YAxis yAxisId="right" orientation="right" stroke="#102A43" />
-              <Tooltip />
+              <YAxis 
+                yAxisId="left" 
+                orientation="left" 
+                stroke="#102A43"
+                tickFormatter={(value) => value.toLocaleString()}
+              />
+              <YAxis 
+                yAxisId="right" 
+                orientation="right" 
+                stroke="#102A43"
+                tickFormatter={(value) => `$${value.toLocaleString()}`}
+              />
+              <Tooltip 
+                formatter={(value, name) => {
+                  if (name === 'Amount ($)') {
+                    return formatCurrency(value)
+                  }
+                  return value.toLocaleString()
+                }}
+              />
               <Legend />
               <Bar yAxisId="left" dataKey="count" fill="#102A43" name="Count" />
-              <Bar yAxisId="right" dataKey="amount" fill="#102A43" name="Amount ($)" />
+              <Bar yAxisId="right" dataKey="amount" fill="#3B82F6" name="Amount ($)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
