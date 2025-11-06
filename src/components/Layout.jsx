@@ -15,80 +15,82 @@ import {
   Menu,
   X
 } from 'lucide-react'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 
 const Layout = () => {
   const { user, logout, sessionExpiry, extendSession } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState('15:00')
-  const [totalSeconds, setTotalSeconds] = useState(900) // 15 minutes = 900 seconds
+  const [totalSeconds, setTotalSeconds] = useState(900)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const intervalRef = useRef(null)
+  const sessionExpiryRef = useRef(null)
+  const logoutRef = useRef(null)
 
-  // Start timer immediately when component mounts or sessionExpiry changes
+  // Keep refs in sync with latest values
   useEffect(() => {
-    // Clear any existing interval first
+    sessionExpiryRef.current = sessionExpiry
+  }, [sessionExpiry])
+
+  useEffect(() => {
+    logoutRef.current = logout
+  }, [logout])
+
+  // Single stable timer that runs continuously
+  useEffect(() => {
+    // Clear any existing interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
-      intervalRef.current = null
     }
-    
-    if (!sessionExpiry) {
-      setTotalSeconds(0)
-      setTimeLeft('00:00')
-      return
-    }
-    
-    // Function to update timer display
+
+    // Timer update function - reads from refs to avoid dependency issues
     const updateTimer = () => {
+      const currentExpiry = sessionExpiryRef.current
+      const currentLogout = logoutRef.current
+
+      if (!currentExpiry) {
+        setTotalSeconds(0)
+        setTimeLeft('00:00')
+        return
+      }
+
       const now = Date.now()
-      const remaining = Math.max(0, Math.floor((sessionExpiry - now) / 1000))
-      
-      // Update total seconds
+      const remaining = Math.max(0, Math.floor((currentExpiry - now) / 1000))
+
+      // Always update the display
       setTotalSeconds(remaining)
-      
-      // Calculate minutes and seconds
+
       const minutes = Math.floor(remaining / 60)
       const seconds = remaining % 60
-      
-      // Format as MM:SS
       const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`
       setTimeLeft(timeString)
-      
-      // Log for debugging
-      if (remaining % 10 === 0) {
-        console.log(`⏱️ Session timer: ${timeString} (${remaining}s remaining)`)
-      }
-      
-      // Check if session expired
+
       if (remaining <= 0) {
-        console.log('⏱️ Session expired, logging out...')
         if (intervalRef.current) {
           clearInterval(intervalRef.current)
           intervalRef.current = null
         }
-        logout()
-        return
+        if (currentLogout) {
+          currentLogout()
+        }
       }
     }
-    
-    // Update immediately
+
+    // Initial update
     updateTimer()
-    
-    // Set up interval to update every second (1000ms)
-    intervalRef.current = setInterval(() => {
-      updateTimer()
-    }, 1000)
-    
-    // Cleanup function
+
+    // Set up interval - this runs continuously and reads from refs
+    intervalRef.current = setInterval(updateTimer, 1000)
+
+    // Cleanup
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
         intervalRef.current = null
       }
     }
-  }, [sessionExpiry, logout])
+  }, []) // Empty dependency array - interval runs once and reads from refs
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
