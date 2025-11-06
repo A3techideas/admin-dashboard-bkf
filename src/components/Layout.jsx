@@ -178,7 +178,7 @@ const Layout = () => {
           <div className="p-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white">
             {/* Session timer */}
             <div 
-              className={`mb-3 px-3 py-2 rounded-lg border shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 ${
+              className={`mb-3 px-3 py-2.5 rounded-lg border shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 ${
                 timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                   ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-200 hover:from-red-100 hover:to-red-200' 
                   : 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200 hover:from-yellow-100 hover:to-yellow-200'
@@ -186,24 +186,24 @@ const Layout = () => {
               onClick={handleExtendSession}
               title="Click to extend session by 15 minutes"
             >
-              <div className={`flex items-center text-xs ${
+              <div className={`flex items-center ${
                 timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                   ? 'text-red-800' 
                   : 'text-yellow-800'
               }`}>
-                <div className={`p-1 rounded mr-2 ${
+                <div className={`p-1.5 rounded-lg mr-2.5 ${
                   timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                     ? 'bg-red-200' 
                     : 'bg-yellow-200'
                 }`}>
-                  <Clock className="w-3 h-3" />
+                  <Clock className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm">{timeLeft || '15:00'}</span>
-                    <span className="text-xs text-gray-500">({totalSeconds}s)</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="font-bold text-base">{timeLeft || '15:00'}</span>
+                    <span className="text-xs font-medium opacity-75">({totalSeconds}s)</span>
                   </div>
-                  <p className={`text-xs ${
+                  <p className={`text-xs font-medium mt-0.5 ${
                     timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                       ? 'text-red-700' 
                       : 'text-yellow-700'
@@ -211,7 +211,8 @@ const Layout = () => {
                     {timeLeft && parseInt(timeLeft.split(':')[0]) < 2 
                       ? 'Expiring!' 
                       : 'Session'
-                    }</p>
+                    }
+                  </p>
                 </div>
               </div>
             </div>

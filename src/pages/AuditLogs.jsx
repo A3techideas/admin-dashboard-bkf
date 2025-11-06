@@ -220,8 +220,7 @@ const AuditLogs = () => {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-client-text">Audit Logs</h2>
+      <div className="flex items-center justify-end mb-6">
         <div className="flex items-center space-x-4">
           <button
             onClick={() => fetchAuditLogs()}
