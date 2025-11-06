@@ -26,39 +26,48 @@ const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const intervalRef = useRef(null)
 
-  // Calculate remaining time from sessionExpiry
-  const calculateRemainingTime = () => {
-    if (!sessionExpiry) return 0
-    const remaining = Math.max(0, Math.floor((sessionExpiry - Date.now()) / 1000))
-    return remaining
-  }
-
   // Start timer immediately when component mounts or sessionExpiry changes
   useEffect(() => {
+    // Clear any existing interval first
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    
     if (!sessionExpiry) {
       setTotalSeconds(0)
       setTimeLeft('00:00')
       return
     }
     
-    // Clear any existing interval
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-    }
-    
+    // Function to update timer display
     const updateTimer = () => {
-      const remaining = calculateRemainingTime()
+      const now = Date.now()
+      const remaining = Math.max(0, Math.floor((sessionExpiry - now) / 1000))
+      
+      // Update total seconds
       setTotalSeconds(remaining)
       
-      // Update display immediately
+      // Calculate minutes and seconds
       const minutes = Math.floor(remaining / 60)
       const seconds = remaining % 60
+      
+      // Format as MM:SS
       const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`
       setTimeLeft(timeString)
       
+      // Log for debugging
+      if (remaining % 10 === 0) {
+        console.log(`⏱️ Session timer: ${timeString} (${remaining}s remaining)`)
+      }
+      
+      // Check if session expired
       if (remaining <= 0) {
-        console.log('Session expired, logging out...')
-        clearInterval(intervalRef.current)
+        console.log('⏱️ Session expired, logging out...')
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+          intervalRef.current = null
+        }
         logout()
         return
       }
@@ -67,12 +76,16 @@ const Layout = () => {
     // Update immediately
     updateTimer()
     
-    // Set up interval to update every second
-    intervalRef.current = setInterval(updateTimer, 1000)
+    // Set up interval to update every second (1000ms)
+    intervalRef.current = setInterval(() => {
+      updateTimer()
+    }, 1000)
     
+    // Cleanup function
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
+        intervalRef.current = null
       }
     }
   }, [sessionExpiry, logout])
@@ -92,9 +105,8 @@ const Layout = () => {
 
   const handleExtendSession = () => {
     extendSession()
-    setTotalSeconds(900) // Reset to 15:00
-    setTimeLeft('15:00')
-    console.log('Session extended by 15 minutes')
+    // The timer will automatically update when sessionExpiry changes
+    console.log('⏱️ Session extended by 15 minutes')
   }
 
   const closeMobileMenu = () => {
